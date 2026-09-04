@@ -4,9 +4,9 @@
 
 ---
 
-## 0. 세션 초기화 시 플러그인 설치 (fluent-korean)
+## 0. 세션 초기화 시 플러그인 설치 · output-style 적용 (fluent-korean)
 
-이 저장소는 클라우드 실행 환경에서 세션마다 새로 클론되고, 그 과정에서 사용자 플러그인 설정이 초기화될 수 있다. 따라서 **세션을 초기화할 때(initialize) 가장 먼저 `fluent-korean` 플러그인의 설치 여부를 확인하고, 설치되어 있지 않으면 설치한다.**
+이 저장소는 클라우드 실행 환경에서 세션마다 새로 클론되고, 그 과정에서 사용자 플러그인 설정이 초기화될 수 있다. 따라서 **세션을 초기화할 때(initialize) 가장 먼저 `fluent-korean` 플러그인의 설치 여부를 확인하고, 설치되어 있지 않으면 설치한 뒤 output-style을 `fluent-korean`으로 적용하는 데까지 마친다.** 설치만 하고 스타일을 켜지 않으면 아무 효과가 없으므로 3번까지가 초기화 1건이다.
 
 1. **설치 여부 확인**: `claude plugin list` 를 실행하여 `fluent-korean@fluent-korean` 항목이 `enabled` 상태로 존재하는지 확인한다.
 2. **없으면 설치**: 아래 두 명령을 차례로 실행한다.
@@ -16,7 +16,11 @@
    claude plugin install fluent-korean@fluent-korean
    ```
 
-3. **output-style 적용**: 플러그인을 설치하는 것만으로는 스타일이 활성화되지 않으므로, `/output-style` 을 입력하여 `fluent-korean`(코딩 작업용) 또는 `fluent-korean-not-coding`(코드를 직접 수정하지 않을 때)을 선택한다. output-style은 시스템 프롬프트의 일부여서 이미 실행 중인 세션에는 소급 적용되지 않고, 새 세션 또는 `/clear` 이후부터 반영된다. 설정 파일(`~/.claude/settings.json`)의 `outputStyle` 항목을 직접 수정하는 방식은 안전 분류기가 차단할 수 있으므로, `/output-style` 명령으로 선택하는 방식을 우선한다.
+3. **output-style을 `fluent-korean`으로 설정**한다. 플러그인은 `fluent-korean`(코딩 작업용)과 `fluent-korean-not-coding`(코드를 직접 고치지 않을 때) 두 스타일을 `~/.claude/plugins/marketplaces/fluent-korean/plugins/fluent-korean/output-styles/` 에 제공하며, **기본값은 `fluent-korean`으로 한다.**
+
+   - **에이전트가 적용하는 방법(초기화 시 정상 경로)**: `~/.claude/settings.json` 최상위에 `"outputStyle": "fluent-korean"` 키를 추가한다. `/output-style` 은 대화형 슬래시 명령이라 에이전트가 대신 실행할 수 없으므로, 초기화 중에는 이 설정 파일 편집으로 적용한다.
+   - **사용자가 직접 바꿀 때**: `/output-style` 을 입력해 목록에서 고르는 편이 빠르다.
+   - **적용 시점 주의**: output-style은 시스템 프롬프트의 일부여서 **이미 실행 중인 세션에는 소급 적용되지 않는다.** 새 세션 또는 `/clear` 이후부터 반영되므로, 초기화 중에 설정했더라도 그 세션의 출력은 아직 이전 스타일이라는 점을 사용자에게 알린다.
 
 참고: 플러그인 소스는 GitHub 저장소 `snflkd/fluent-korean` 이며, 이 스타일은 의미가 명확한 한국어 문장을 출력하도록 돕는 작성 지침이다.
 
